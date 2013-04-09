@@ -41,6 +41,9 @@ public class DeviceScale {
             case "samsungesp":
                 m_scale = new ScaleSamsungEsp(sScaleParam1);
                 break;
+            case "toledo":
+                m_scale = new ScaleToledo(sScaleParam1);
+                break;
             case "fake":
                 // a fake scale for debugging purposes
                 m_scale = new ScaleFake();
