@@ -22,11 +22,15 @@ package com.openbravo.pos.scale;
 import gnu.io.*;
 import java.io.*;
 import java.util.TooManyListenersException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ScaleToledo implements Scale, SerialPortEventListener {
     
     private CommPortIdentifier m_PortIdPrinter;
     private SerialPort m_CommPortPrinter;  
+    private static final Logger logger = Logger.getLogger("com.openbravo.pos.scale.ScaleToledo");
+     
     
     private String m_sPortScale;
     private OutputStream m_out;
@@ -71,6 +75,7 @@ public class ScaleToledo implements Scale, SerialPortEventListener {
             m_dWeightBuffer = 0.0;
             m_dWeightDecimals = 1.0;
             write(new byte[] {0x57,0x0D}); // $
+            logger.log(Level.INFO, "send byte");
             flush();             
             
             // Esperamos un ratito
@@ -122,7 +127,7 @@ public class ScaleToledo implements Scale, SerialPortEventListener {
     
     @Override
     public void serialEvent(SerialPortEvent e) {
-
+        logger.log(Level.INFO, "serial event");
 	// Determine type of event.
 	switch (e.getEventType()) {
             case SerialPortEvent.BI:
@@ -136,10 +141,11 @@ public class ScaleToledo implements Scale, SerialPortEventListener {
             case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
                 break;
             case SerialPortEvent.DATA_AVAILABLE:
+   
                 try {
                     while (m_in.available() > 0) {
                         int b = m_in.read();
-
+                        logger.log(Level.INFO, "Serial out: " + b);
                         if (b == 0x4C) { // L ASCII
                             // Fin de lectura
                             synchronized (this) {
